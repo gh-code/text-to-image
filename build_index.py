@@ -171,10 +171,15 @@ def main(argv=None):
     import numpy as np
     from sentence_transformers import SentenceTransformer
 
-    import torch
-    n_threads = max(1, args.threads)
-    torch.set_num_threads(n_threads)
-    log(f"[INFO] Using {n_threads} CPU thread(s) (threads={args.threads})")
+    # torch is optional for tests (CI runs without it). Only set thread count
+    # when the real torch backend is present; the fake model ignores it.
+    try:
+        import torch
+        n_threads = max(1, args.threads)
+        torch.set_num_threads(n_threads)
+        log(f"[INFO] Using {n_threads} CPU thread(s) (threads={args.threads})")
+    except ModuleNotFoundError:
+        log(f"[INFO] torch not installed; skipping CPU thread configuration (threads={args.threads})")
 
     model = SentenceTransformer(args.model, device=device)
 
