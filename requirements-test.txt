@@ -1,0 +1,9 @@
+# Test-only dependencies. Deliberately excludes torch / sentence-transformers so CI
+# stays fast and doesn't download the ~1.4 GB EmbeddingGemma 2 model.
+# The real ML backend is replaced by a deterministic fake in tests/conftest.py.
+pytest>=7.0
+faiss-cpu
+numpy
+flask
+requests
+pillow>=10.1

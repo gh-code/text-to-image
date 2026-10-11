@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+.venv/
+
+# Test / tooling caches
+.pytest_cache/
+
+# Generated artifacts (rebuildable from photos/)
+img_index.npy
+images_meta.json
+search_results.json
+
+# Windows file attributes
+*.Zone.Identifier
+
+# Source photos (large binary assets, not committed)
+photos/
