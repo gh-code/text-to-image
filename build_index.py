@@ -102,6 +102,7 @@ def main(argv=None):
     ap.add_argument("--model", default="google/embeddinggemma-2", help="embedding model ID")
     ap.add_argument("--dim", type=int, default=768, help="vector dimension (default 768)")
     ap.add_argument("--batch", type=int, default=16, help="number of images per batch")
+    ap.add_argument("--threads", type=int, default=os.cpu_count() or 1, help="number of CPU threads for the model (default: all cores)")
     ap.add_argument("--cpu", action="store_true", help="force CPU usage (saves VRAM)")
     ap.add_argument("--force-full", action="store_true", help="force a full rebuild, ignoring the old index")
     ap.add_argument("--prune", action="store_true", help="full rebuild and prune deleted photos (keep only files on disk)")
@@ -169,6 +170,12 @@ def main(argv=None):
     log(f"[INFO] Loading model {args.model} (device={device or 'auto'}) ...")
     import numpy as np
     from sentence_transformers import SentenceTransformer
+
+    import torch
+    n_threads = max(1, args.threads)
+    torch.set_num_threads(n_threads)
+    log(f"[INFO] Using {n_threads} CPU thread(s) (threads={args.threads})")
+
     model = SentenceTransformer(args.model, device=device)
 
     import faiss
