@@ -25,8 +25,37 @@ genuine index/search behaviour. torch is never imported here, keeping the
 CI job fast and dependency-light.
 """
 
+import sys
+import types
+
 import numpy as np
 import pytest
+
+
+def _inject_fake_sentence_transformers_module():
+    """Register a stub ``sentence_transformers`` module in sys.modules.
+
+    Tests use ``monkeypatch.setattr("sentence_transformers.SentenceTransformer", ...)``
+    to swap in the fake model. ``monkeypatch.setattr`` imports the target module
+    first, which fails in CI because sentence_transformers/torch are never
+    installed. Injecting a stub module here lets the import succeed while keeping
+    CI dependency-light; build_index/server/search use deferred imports and never
+    touch this stub at runtime.
+    """
+    if "sentence_transformers" not in sys.modules:
+        module = types.ModuleType("sentence_transformers")
+
+        class _StubSentenceTransformer:
+            def __init__(self, *args, **kwargs):
+                raise RuntimeError(
+                    "sentence_transformers.SentenceTransformer must be monkeypatched in tests"
+                )
+
+        module.SentenceTransformer = _StubSentenceTransformer
+        sys.modules["sentence_transformers"] = module
+
+
+_inject_fake_sentence_transformers_module()
 
 
 class FakeModel:
