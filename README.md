@@ -9,10 +9,10 @@ The model projects text and images into the same 768-dimensional vector space, s
 ## Architecture
 
 ```
-┌──────────────┐   HTTP POST /search    ┌─────────────────────────┐
+┌───────────────┐   HTTP POST /search    ┌─────────────────────────┐
 │ search_images │ ────────────────────▶ │  server.py (persistent) │
-│   client     │ ◀──────────────────── │  model loaded once      │
-└──────────────┘   JSON results         │  faiss index in memory  │
+│    client     │ ◀──────────────────── │  model loaded once      │
+└───────────────┘   JSON results         │  faiss index in memory  │
                                          └─────────────────────────┘
 ```
 
